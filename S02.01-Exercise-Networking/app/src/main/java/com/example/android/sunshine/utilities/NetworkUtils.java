@@ -15,9 +15,13 @@
  */
 package com.example.android.sunshine.utilities;
 
+import android.net.Uri;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -35,6 +39,10 @@ public final class NetworkUtils {
             "https://andfun-weather.udacity.com/staticweather";
 
     private static final String FORECAST_BASE_URL = STATIC_WEATHER_URL;
+
+    // Open Weather Map's API
+    // API: api.openweathermap.org/data/2.5/weather?q={city name}
+    private static final String OPEN_WEATHER_MAPS_URL = "api.openweathermap.org/data/2.5/weather";
 
     /*
      * NOTE: These values only effect responses from OpenWeatherMap, NOT from the fake weather
@@ -65,8 +73,20 @@ public final class NetworkUtils {
      * @return The URL to use to query the weather server.
      */
     public static URL buildUrl(String locationQuery) {
-        // TODO (1) Fix this method to return the URL used to query Open Weather Map's API
-        return null;
+        // TODO (1) Fix this method to return the URL used to query Open Weather Map's API: https://openweathermap.org/current#one
+        URL url = null;
+        Uri uri = Uri.parse(OPEN_WEATHER_MAPS_URL)
+                .buildUpon()
+                .appendQueryParameter(QUERY_PARAM, locationQuery)
+                .build();
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+        } finally {
+            return url;
+        }
     }
 
     /**
