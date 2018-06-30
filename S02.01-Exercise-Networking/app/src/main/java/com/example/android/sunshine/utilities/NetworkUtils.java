@@ -42,7 +42,7 @@ public final class NetworkUtils {
 
     // Open Weather Map's API
     // API: api.openweathermap.org/data/2.5/weather?q={city name}
-    private static final String OPEN_WEATHER_MAPS_URL = "api.openweathermap.org/data/2.5/weather";
+    private static final String OPEN_WEATHER_MAPS_URL = "https://api.openweathermap.org/data/2.5/weather";
 
     /*
      * NOTE: These values only effect responses from OpenWeatherMap, NOT from the fake weather
@@ -65,6 +65,9 @@ public final class NetworkUtils {
     final static String UNITS_PARAM = "units";
     final static String DAYS_PARAM = "cnt";
 
+    final static String APP_ID = "APPID";
+    final static  String API_KEY = "309342efa795467ecc38a717ea0ffdb7";
+
     /**
      * Builds the URL used to talk to the weather server using a location. This location is based
      * on the query capabilities of the weather provider that we are using.
@@ -73,11 +76,12 @@ public final class NetworkUtils {
      * @return The URL to use to query the weather server.
      */
     public static URL buildUrl(String locationQuery) {
-        // TODO (1) Fix this method to return the URL used to query Open Weather Map's API: https://openweathermap.org/current#one
+        // OK (1) Fix this method to return the URL used to query Open Weather Map's API: https://openweathermap.org/current#one
         URL url = null;
         Uri uri = Uri.parse(OPEN_WEATHER_MAPS_URL)
                 .buildUpon()
-                .appendQueryParameter(QUERY_PARAM, locationQuery)
+                .appendQueryParameter(QUERY_PARAM, locationQuery) // City
+                .appendQueryParameter(APP_ID, API_KEY) // API KEY to get access
                 .build();
         try {
             url = new URL(uri.toString());
@@ -85,6 +89,7 @@ public final class NetworkUtils {
             e.printStackTrace();
             Log.e(TAG, e.getMessage());
         } finally {
+            Log.d(TAG, "buildUrl: " + url.toString());
             return url;
         }
     }

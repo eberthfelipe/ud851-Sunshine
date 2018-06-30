@@ -14,10 +14,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
         android:layout_width="match_parent"
@@ -27,17 +28,28 @@
         android:id="@+id/et_weather_search"
         />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        tools:layout_marginTop="40dp">
+        android:layout_marginTop="10dp">
 
-        <TextView
-            android:id="@+id/tv_weather_data"
+        <ProgressBar
+            android:id="@+id/pb_loading_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textSize="20sp" />
-    </ScrollView>
-</FrameLayout>
+            android:visibility="invisible"
+            android:layout_gravity="center_horizontal" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tv_weather_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp" />
+        </ScrollView>
+
+    </FrameLayout>
+</LinearLayout>

@@ -15,16 +15,23 @@
  */
 package com.example.android.sunshine;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.sunshine.utilities.NetworkUtils;
+import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,9 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText mSearchWeatherEditText;
 
+    private ProgressBar mLoadingSearchProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_forecast);
 
         /*
@@ -48,7 +58,19 @@ public class MainActivity extends AppCompatActivity {
          */
         mWeatherTextView = (TextView) findViewById(R.id.tv_weather_data);
         mSearchWeatherEditText = (EditText) findViewById(R.id.et_weather_search);
+        mLoadingSearchProgressBar = (ProgressBar) findViewById(R.id.pb_loading_search);
+        showProgressOnLoading(false);
+    }
 
+    private void showProgressOnLoading(boolean bool){
+        setProgressBarIndeterminateVisibility(bool);
+        if (bool){
+            mLoadingSearchProgressBar.setVisibility(View.VISIBLE);
+            mWeatherTextView.setVisibility(View.INVISIBLE);
+        } else {
+            mLoadingSearchProgressBar.setVisibility(View.INVISIBLE);
+            mWeatherTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -79,6 +101,17 @@ public class MainActivity extends AppCompatActivity {
     public class ConnectToNetwork extends AsyncTask<URL, Void, String>{
 
         @Override
+        protected void onPreExecute() {
+            showProgressOnLoading(true);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
         protected String doInBackground(URL... urls) {
             // ok (6) Override the doInBackground method to perform your network requests
             String results = null;
@@ -87,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     results = NetworkUtils.getResponseFromHttpUrl(url);
                     Log.i(TAG, "doInBackground: results=" + results);
+//                    Context context = MainActivity.this;
+//                    String[] arrayJSON = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(context, results);
+//                    return arrayJSON;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -97,10 +133,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            showProgressOnLoading(false);
             // ok (7) Override the onPostExecute method to display the results of the network request
-            mWeatherTextView.setText(s);
+//            for (String stringJSON : result) {
+//                mWeatherTextView.append(stringJSON + "\n");
+//            }
+            mWeatherTextView.setText(result);
         }
 
     }
